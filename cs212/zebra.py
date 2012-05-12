@@ -84,5 +84,22 @@ def timedcalls(n, fn, *args):
             times.append(timedcall(fn, *args)[0])
     return min(times), average(times), max(times)
 
+def instrument_fn(fn, *args):
+    """Prints fn, result, the number of times iterators are created
+    and the number of items yielded from all iterators"""
+    c.starts, c.items = 0, 0
+    result = fn(*args)
+    print "%s got %s with %5d iters over %7d items" % (
+            fn.__name__, result, c.starts, c.items)
+
+def c(iterable):
+    """A small debug helper that keeps track of number of iterators
+    started and items yielded"""
+    c.starts += 1
+    for i in iterable:
+        c.items += 1
+        yield i
+
 if __name__ == '__main__':
     print "%s drinks water and %s owns the zebra" % zebra_puzzle()
+    print "zebra_puzzle took %s seconds" % timedcall(zebra_puzzle)[0]
